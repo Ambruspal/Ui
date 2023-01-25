@@ -36,7 +36,7 @@ public class View {
                 e.printStackTrace();
             }
 
-            controller.findVehicleByRegistrationNumber(jsonObject);
+            controller.findVehicle(jsonObject);
         }
     }
 
@@ -82,5 +82,13 @@ public class View {
         String message = viewModel.getMessage();
 
         System.out.println("View: " + message);
+    }
+
+    public void displayVehicle(ViewModel viewModelVehicle) {
+        System.out.println("Rendszám " + viewModelVehicle.getRegistrationNumber());
+        System.out.println("Gyártmány " + viewModelVehicle.getMake());
+        System.out.println("Modell " + viewModelVehicle.getModel());
+        System.out.println("Ülések száma " + viewModelVehicle.getNumberOfSeats());
+        System.out.println("Jármű típusa: " + viewModelVehicle.getVehicleType());
     }
 }
