@@ -1,9 +1,8 @@
 package hu.lechnerkozpont.ambruspal.vehicle.ui;
 
-import hu.lechnerkozpont.ambruspal.vehicle.exception.InvalidJsonException;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class View {
@@ -25,36 +24,63 @@ public class View {
         input = inputScanner.next();
 
         if ("C".equals(input)) createVehicle();
-        if ("F".equals(input)) controller.findVehicleByRegistrationNumber("333");
+
+        if ("F".equals(input)) {
+            JSONObject jsonObject = new JSONObject();
+
+            try {
+                System.out.print("Adja meg a rendszámot: ");
+                input = inputScanner.next();
+                jsonObject.put("registrationNumber", input);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            controller.findVehicleByRegistrationNumber(jsonObject);
+        }
     }
 
     private void createVehicle() {
+        HashMap inputs = new HashMap();
+
+        System.out.print("Az autó rendszáma: ");
+        input = inputScanner.next();
+        inputs.put(1, input);
+
+        System.out.print("Az autó gyártmánya: ");
+        input = inputScanner.next();
+        inputs.put(2, input);
+
+        System.out.print("Az autó modelje: ");
+        input = inputScanner.next();
+        inputs.put(3, input);
+
+        System.out.print("Ülések száma: ");
+        input = inputScanner.next();
+        inputs.put(4, input);
+
+        System.out.print("Az autó típusa: ");
+        input = inputScanner.next();
+        inputs.put(5, input);
+
+        JSONObject jsonObject = new JSONObject();
+
         try {
-            JSONObject jsonVehicle = new JSONObject();
-
-            System.out.print("Az autó rendszáma: ");
-            input = inputScanner.next();
-            jsonVehicle.put("registrationNumber", input);
-
-            System.out.print("Az autó gyártmánya: ");
-            input = inputScanner.next();
-            jsonVehicle.put("make", input);
-
-            System.out.print("Az autó modelje: ");
-            input = inputScanner.next();
-            jsonVehicle.put("model", input);
-
-            System.out.print("Ülések száma: ");
-            input = inputScanner.next();
-            jsonVehicle.put("numberOfSeats", input);
-
-            System.out.print("Az autó típusa: ");
-            input = inputScanner.next();
-            jsonVehicle.put("vehicleType", input);
-
-            controller.saveVehicle(jsonVehicle.toString());
-        } catch (JSONException exc) {
-            throw new InvalidJsonException();
+            jsonObject.put("registrationNumber", inputs.get(1).toString());
+            jsonObject.put("make", inputs.get(2).toString());
+            jsonObject.put("model", inputs.get(3).toString());
+            jsonObject.put("numberOfSeats", inputs.get(4).toString());
+            jsonObject.put("vehicleType", inputs.get(5).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        controller.saveVehicle(jsonObject);
+    }
+
+    public void displaySaveMessage(ViewModel viewModel) {
+        String message = viewModel.getMessage();
+
+        System.out.println("View: " + message);
     }
 }
