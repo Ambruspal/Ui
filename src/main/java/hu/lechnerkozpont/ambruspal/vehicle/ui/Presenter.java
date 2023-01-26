@@ -23,59 +23,52 @@ public class Presenter implements VehicleResponseInterface {
     public void viewVehicleByRegistrationNumber(String stringVehicle) {
         ViewModel viewModelVehicle = new ViewModel();
 
-        try {
-            JSONObject jsonObjectVehicle = new JSONObject(stringVehicle);
+        if (this.isNotNull(stringVehicle)) {
+            try {
+                JSONObject jsonObjectVehicle = new JSONObject(stringVehicle);
 
-            viewModelVehicle.setRegistrationNumber(jsonObjectVehicle.getString("registrationNumber"));
-            viewModelVehicle.setMake(jsonObjectVehicle.getString("make"));
-            viewModelVehicle.setModel(jsonObjectVehicle.getString("model"));
-            viewModelVehicle.setNumberOfSeats(jsonObjectVehicle.getString("numberOfSeats"));
-            viewModelVehicle.setVehicleType(jsonObjectVehicle.getString("vehicleType"));
+                viewModelVehicle.setRegistrationNumber(jsonObjectVehicle.getString("registrationNumber"));
+                viewModelVehicle.setMake(jsonObjectVehicle.getString("make"));
+                viewModelVehicle.setModel(jsonObjectVehicle.getString("model"));
+                viewModelVehicle.setNumberOfSeats(jsonObjectVehicle.getString("numberOfSeats"));
+                viewModelVehicle.setVehicleType(jsonObjectVehicle.getString("vehicleType"));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
 
+            view.displayVehicle(viewModelVehicle);
+        } else {
 
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
         }
-
-        view.displayVehicle(viewModelVehicle);
     }
 
     @Override
-    public void displaySave(JSONObject jsonObject) {
-        ViewModel viewModel = new ViewModel();
+    public void displaySave(String json) {
+        if (this.isNotNull(json)) {
+            ViewModel viewModel = new ViewModel();
+            JSONObject jsonObjectResponse = null;
+            String message = null;
 
-        try {
-            if (jsonObject.has("message") == true) {
-                String successMessage = this.jsonObjectParser(jsonObject, "message");
-
-                viewModel.setMessage(successMessage);
+            try {
+                jsonObjectResponse = new JSONObject(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (Exception exc) {
-            exc.printStackTrace();
-        }
 
-        try {
-            if (jsonObject.has("error") == true) {
-                String errorMessage = this.jsonObjectParser(jsonObject, "error");
-
-                viewModel.setMessage(errorMessage);
+            try {
+                if (jsonObjectResponse.has("message") == true) {
+                    message = jsonObjectResponse.getString("message");
+                }
+            } catch (Exception exc) {
+                exc.printStackTrace();
             }
-        } catch (Exception exc) {
-            exc.printStackTrace();
-        }
 
-        view.displaySaveMessage(viewModel);
+            viewModel.setMessage(message);
+            view.displaySaveMessage(viewModel);
+        }
     }
 
-    private String jsonObjectParser(JSONObject jsonObject, String keyOfMessage) {
-        String message = null;
-
-        try {
-            message = jsonObject.getString(keyOfMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return message;
+    private Boolean isNotNull(String response) {
+        return response != null;
     }
 }
